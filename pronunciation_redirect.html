@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>표준발음 변환기 중계</title>
+</head>
+<body>
+  <h2>표준발음 변환기로 이동 중...</h2>
+  <form id="redirectForm" method="POST" action="https://pronunciation.cs.pusan.ac.kr/pronunc2.asp" accept-charset="euc-kr">
+    <input type="hidden" name="text1" id="text1">
+    <input type="hidden" name="submit1" value="확인하기">
+  </form>
+
+  <script>
+    // 获取 URL 中的参数（如 ?q=지하철에서）
+    function getQueryParam(name) {
+      const params = new URLSearchParams(window.location.search);
+      return params.get(name);
+    }
+
+    // 自动提交表单
+    const query = getQueryParam("q");
+    if (query) {
+      document.getElementById("text1").value = query;
+      document.getElementById("redirectForm").submit();
+    } else {
+      document.body.innerHTML = "<p>검색어가 없습니다. URL에 ?q=단어 형식으로 입력하세요.</p>";
+    }
+  </script>
+</body>
+</html>
