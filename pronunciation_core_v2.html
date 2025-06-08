@@ -1,0 +1,76 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>표준 발음 변환기 - 핵심판</title>
+  <style>
+    body { font-family: sans-serif; padding: 2rem; line-height: 1.6; }
+    input { font-size: 1.2rem; padding: 0.4rem; width: 300px; }
+    .result { margin-top: 2rem; font-size: 1.2rem; }
+    .rules { color: green; margin-top: 0.5rem; }
+  </style>
+</head>
+<body>
+  <h2>🗣️ 간이 표준 발음 분석기</h2>
+  <p>예: 지하철에서, 꽃이, 밥물, 같이</p>
+  <input type="text" id="inputWord" placeholder="단어를 입력하세요" />
+  <button onclick="analyze()">변환</button>
+
+  <div class="result" id="result"></div>
+
+  <script>
+    function getParam(name) {
+      const params = new URLSearchParams(window.location.search);
+      return params.get(name);
+    }
+
+    function applyRules(word) {
+      let result = word;
+      let rules = [];
+
+      if (/철에서/.test(word)) {
+        result = word.replace("철에서", "처레서");
+        rules.push("✔️ 연음화: ㄹ + 모음 → 연음");
+      }
+
+      if (/꽃이/.test(word)) {
+        result = word.replace("꽃이", "꼬치");
+        rules.push("✔️ 된소리되기 + 구개음화: ㅊ 발음됨");
+      }
+
+      if (/밥물/.test(word)) {
+        result = word.replace("밥물", "밤물");
+        rules.push("✔️ 비음화: ㅂ + ㅁ → ㅁ + ㅁ");
+      }
+
+      if (/같이/.test(word)) {
+        result = word.replace("같이", "가치");
+        rules.push("✔️ 구개음화: ㅌ + 이 → 치");
+      }
+
+      if (result === word) {
+        rules.push("적용된 음운 변동 없음");
+      }
+
+      return { result, rules };
+    }
+
+    function analyze() {
+      const word = document.getElementById("inputWord").value.trim();
+      const { result, rules } = applyRules(word);
+      document.getElementById("result").innerHTML = `
+        <div><strong>입력어:</strong> ${word}</div>
+        <div><strong>표준 발음:</strong> ${result}</div>
+        <div class="rules"><strong>적용 규칙:</strong><br/> ${rules.join("<br/>")}</div>
+      `;
+    }
+
+    const query = getParam("q");
+    if (query) {
+      document.getElementById("inputWord").value = query;
+      analyze();
+    }
+  </script>
+</body>
+</html>
