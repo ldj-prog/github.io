@@ -1,0 +1,72 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>표준 발음 변환기 - 간이판</title>
+  <style>
+    body { font-family: sans-serif; padding: 2rem; }
+    input { font-size: 1.2rem; padding: 0.3rem; width: 300px; }
+    .result { margin-top: 1rem; font-size: 1.3rem; }
+    .rules { margin-top: 0.5rem; color: green; }
+  </style>
+</head>
+<body>
+  <h2>🗣️ 간이 표준 발음 변환기</h2>
+  <input type="text" id="inputWord" placeholder="단어를 입력하세요" />
+  <button onclick="analyze()">변환</button>
+
+  <div class="result" id="result"></div>
+
+  <script>
+    function getParam(name) {
+      const params = new URLSearchParams(window.location.search);
+      return params.get(name);
+    }
+
+    function analyzeWord(word) {
+      let result = word;
+      let rules = [];
+
+      if (word.includes("ㄴ") && (word.includes("ㄹ") || word.includes("ᄅ"))) {
+        result = result.replace(/ㄴ/g, "ㄹ");
+        rules.push("유음화");
+      }
+      if (word.includes("ㅂ") && word.includes("ㅁ")) {
+        result = result.replace(/ㅂ/g, "ㅁ");
+        rules.push("비음화");
+      }
+      if (word.includes("ㄷ") && word.includes("이")) {
+        result = result.replace(/ㄷ이/g, "지");
+        rules.push("구개음화");
+      }
+      if (word.includes("ㅌ") && word.includes("이")) {
+        result = result.replace(/ㅌ이/g, "치");
+        rules.push("구개음화");
+      }
+
+      return { result, rules };
+    }
+
+    function display(word) {
+      const { result, rules } = analyzeWord(word);
+      document.getElementById("result").innerHTML = `
+        <strong>입력어:</strong> ${word}<br/>
+        <strong>변환 발음:</strong> ${result}<br/>
+        <div class="rules"><strong>적용 규칙:</strong> ${rules.join(", ") || "없음"}</div>
+      `;
+    }
+
+    function analyze() {
+      const word = document.getElementById("inputWord").value.trim();
+      if (word) display(word);
+    }
+
+    const query = getParam("q");
+    if (query) {
+      document.getElementById("inputWord").value = query;
+      display(query);
+    }
+  </script>
+</body>
+</html>
